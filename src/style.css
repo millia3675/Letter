@@ -1,0 +1,259 @@
+/* ===== 기본 스타일 초기화 ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+}
+
+/* ===== 밤하늘 스타일 위젯 컨테이너 ===== */
+.cardboard {
+  width: 280px;
+  height: 350px;
+  background: transparent;
+  border-radius: 24px;
+  box-shadow: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  overflow: hidden;
+}
+
+/* 별 효과 제거 */
+.cardboard::before {
+  display: none;
+}
+
+/* ===== 드래그 핸들 ===== */
+#drag-handle {
+  display: none;
+}
+
+/* ===== 우체통(봉투) 스타일 ===== */
+#mailbox-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding-top: 20px;
+  z-index: 10;
+}
+
+.mailbox {
+  position: relative;
+  cursor: move;
+  transition: all 0.3s ease;
+  -webkit-app-region: no-drag;
+  margin-top: -30px;
+}
+
+.mailbox:hover {
+  transform: scale(1.05) translateY(-5px);
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.mailbox:active {
+  transform: scale(0.95);
+}
+
+.mailbox-image {
+  width: 160px;
+  height: auto;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  image-rendering: pixelated; /* 픽셀아트 선명하게 */
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.mailbox:hover .mailbox-image {
+  transform: scale(1.05);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+}
+
+/* 흔들림 애니메이션 */
+@keyframes shake {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  25% { transform: translateX(-5px) rotate(-3deg); }
+  50% { transform: translateX(5px) rotate(3deg); }
+  75% { transform: translateX(-3px) rotate(-1deg); }
+}
+
+.mailbox.shake {
+  animation: shake 0.2s ease-in-out;
+}
+
+/* 새 편지 뱃지 */
+#new-letter-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(145deg, #ff6b9d, #c44569);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 2px 15px rgba(255, 107, 157, 0.6);
+  animation: glow-pulse 2s infinite;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes glow-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 2px 15px rgba(255, 107, 157, 0.6);
+  }
+  50% { 
+    transform: scale(1.1);
+    box-shadow: 0 2px 25px rgba(255, 107, 157, 0.8);
+  }
+}
+
+/* ===== 카운트다운 ===== */
+#countdown-wrapper {
+  position: absolute;
+  bottom: 25px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #ffffff;
+  font-size: 11px;
+  -webkit-app-region: no-drag;
+  pointer-events: none;
+}
+
+#countdown-text {
+  display: block;
+  opacity: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #000000;
+  text-shadow: 
+    -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+    1px 1px 0 #fff,
+    0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+#countdown-timer {
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: 'Consolas', 'Courier New', monospace;
+  color: #000000;
+  text-shadow: 
+    -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+    1px 1px 0 #fff,
+    0 0 6px rgba(255, 255, 255, 0.9);
+  margin-top: 4px;
+}
+
+/* ===== 컨텍스트 메뉴 ===== */
+.context-menu {
+  position: fixed;
+  background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 16px;
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(138, 43, 226, 0.2);
+  min-width: 170px;
+  z-index: 1000;
+  overflow: hidden;
+  -webkit-app-region: no-drag;
+  backdrop-filter: blur(10px);
+}
+
+.menu-item {
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.menu-item:hover {
+  background: linear-gradient(90deg, rgba(167, 139, 250, 0.3), rgba(139, 92, 246, 0.2));
+  color: #a78bfa;
+  padding-left: 25px;
+}
+
+.menu-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.3), transparent);
+  margin: 4px 15px;
+}
+
+/* ===== 파티클 ===== */
+#particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #a78bfa, #7c3aed);
+  border-radius: 50%;
+  animation: particle-rise 2.5s ease-out forwards;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.8);
+}
+
+@keyframes particle-rise {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80px) scale(0);
+  }
+}
+
+/* ===== 유틸리티 ===== */
+.hidden {
+  display: none !important;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(167, 139, 250, 0.5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(167, 139, 250, 0.7);
+}

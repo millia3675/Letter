@@ -1,0 +1,10 @@
+{
+  "apiKey": "",
+  "userName": "",
+  "userPrompt": "",
+  "characterPrompt": "",
+  "relationship": "",
+  "formalSpeech": true,
+  "alwaysOnTop": true,
+  "letterFont": "NanumSquare"
+}

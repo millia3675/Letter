@@ -1,0 +1,65 @@
+{
+  "name": "starlight-letter",
+  "version": "1.0.3",
+  "description": "Starlight Letter - 별빛 속에서 AI 캐릭터와 편지를 주고받는 데스크톱 위젯",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:portable": "electron-builder --win portable",
+    "build:dir": "electron-builder --win dir"
+  },
+  "keywords": [
+    "electron",
+    "widget",
+    "letter",
+    "ai",
+    "gemini"
+  ],
+  "author": "Starlight Letter",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "png-to-ico": "^3.0.1",
+    "sharp": "^0.34.5"
+  },
+  "build": {
+    "appId": "com.starlight.letter",
+    "productName": "Starlight Letter",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      "src/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "stamp",
+        "to": "stamp",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "src/assets/icon.png",
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "StarlightLetter-${version}.exe"
+    }
+  }
+}

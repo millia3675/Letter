@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src https://generativelanguage.googleapis.com;">
+  <title>Starlight Letter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 메인 위젯 -->
+  <div id="widget-container" class="cardboard">
+    <!-- 드래그 영역 -->
+    <div id="drag-handle"></div>
+    
+    <!-- 봉투/편지 아이콘 -->
+    <div id="mailbox-wrapper">
+      <div id="mailbox" class="mailbox">
+        <img src="assets/Close.png" alt="편지" class="mailbox-image" id="mailbox-img" draggable="false">
+        <!-- 새 편지 알림 -->
+        <div id="new-letter-badge" class="hidden">!</div>
+      </div>
+    </div>
+    
+    <!-- 카운트다운 -->
+    <div id="countdown-wrapper">
+      <span id="countdown-text">다음 답장까지</span>
+      <span id="countdown-timer">00:00:00</span>
+    </div>
+    
+    <!-- 파티클 컨테이너 -->
+    <div id="particles"></div>
+  </div>
+  
+  <!-- 우클릭 컨텍스트 메뉴 -->
+  <div id="context-menu" class="context-menu hidden">
+    <div class="menu-item" data-action="letter">💌 편지</div>
+    <div class="menu-item" data-action="fortune">🌙 오늘의 운세</div>
+    <div class="menu-item" data-action="settings">⚙️ 설정</div>
+    <div class="menu-divider"></div>
+    <div class="menu-item" data-action="quit">✖ 종료</div>
+  </div>
+  
+  <script>
+    console.log('=== Starlight Letter ===');
+    console.log('electronAPI:', typeof window.electronAPI);
+  </script>
+  <script src="modules/llm.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

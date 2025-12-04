@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.rawgit.com https://cdn.jsdelivr.net; font-src https://cdn.rawgit.com https://cdn.jsdelivr.net https://fonts.gstatic.com; connect-src https://generativelanguage.googleapis.com; img-src 'self' data: file:;">
+  <title>DDB Letter</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 편지 페이지 -->
+    <div id="letter-page" class="page hidden">
+      <div class="page-header draggable">
+        <h1>📮 편지</h1>
+        <button class="close-btn" onclick="window.electronAPI.closePopup()">×</button>
+      </div>
+      <div class="page-content">
+        <div class="button-group">
+          <button id="btn-write-letter" class="main-btn primary">✏️ 편지 보내기</button>
+          <button id="btn-view-letters" class="main-btn secondary">📖 편지 보관함</button>
+        </div>
+        
+        <!-- 편지 작성 영역 -->
+        <div id="write-section" class="section hidden">
+          <h2>✏️ 편지 작성</h2>
+          <div id="rewrite-notice" class="notice warning hidden">
+            ⚠️ 오늘 이미 편지를 보냈습니다. 다시 쓰려면 받은 답장을 포기해야 합니다.
+          </div>
+          <textarea id="letter-input" placeholder="오늘 하루는 어땠나요? 편지를 작성해주세요..."></textarea>
+          <div class="char-count"><span id="letter-char-count">0</span>자</div>
+          <button id="btn-send-letter" class="main-btn primary">💌 편지 보내기</button>
+          <button id="btn-rewrite-letter" class="main-btn warning hidden">🔄 답장 포기하고 다시 쓰기</button>
+          <button id="btn-back-menu" class="main-btn secondary">← 뒤로</button>
+        </div>
+        
+        <!-- 편지 보관함 영역 -->
+        <div id="archive-section" class="section hidden">
+          <h2>📖 편지 보관함</h2>
+          <div id="calendar-container">
+            <div class="calendar-header">
+              <button id="prev-month" class="calendar-nav">&lt;</button>
+              <span id="current-month">2025년 12월</span>
+              <button id="next-month" class="calendar-nav">&gt;</button>
+            </div>
+            <div class="calendar-weekdays">
+              <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+            </div>
+            <div id="calendar-days" class="calendar-days"></div>
+          </div>
+          <div id="letter-detail" class="hidden">
+            <!-- 내가 보낸 편지 -->
+            <div class="letter-paper my-letter" id="my-letter-paper">
+              <div class="letter-paper-header">
+                <div class="letter-info">
+                  <div class="letter-label">📤 내가 보낸 편지</div>
+                  <div class="letter-date" id="my-letter-date"></div>
+                </div>
+                <button class="save-btn" id="btn-save-my-letter" title="이미지로 저장">💾</button>
+              </div>
+              <div class="letter-paper-body">
+                <p id="my-letter-content"></p>
+              </div>
+            </div>
+            
+            <!-- 받은 답장 -->
+            <div class="letter-paper reply-letter" id="reply-letter-paper">
+              <div class="letter-paper-header">
+                <div class="letter-info">
+                  <div class="letter-label">📥 받은 답장</div>
+                  <div class="letter-date" id="reply-letter-date"></div>
+                </div>
+                <button class="save-btn" id="btn-save-reply-letter" title="이미지로 저장">💾</button>
+                <img id="reply-stamp" class="letter-stamp" src="" alt="우표">
+              </div>
+              <div class="letter-paper-body">
+                <p id="reply-content"></p>
+              </div>
+            </div>
+            
+            <button id="btn-receive-reply" class="main-btn primary hidden">📬 답장 받기</button>
+            <button id="btn-regenerate-reply" class="main-btn warning hidden">🔄 답장 다시 받기</button>
+            <button id="btn-back-calendar" class="main-btn secondary">← 달력으로</button>
+          </div>
+          <button id="btn-back-menu2" class="main-btn secondary">← 뒤로</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 운세 페이지 -->
+    <div id="fortune-page" class="page hidden">
+      <div class="page-header draggable">
+        <h1>🔮 오늘의 운세</h1>
+        <button class="close-btn" onclick="window.electronAPI.closePopup()">×</button>
+      </div>
+      <div class="page-content">
+        <div id="fortune-content">
+          <p id="fortune-text">버튼을 눌러 오늘의 운세를 확인하세요!</p>
+        </div>
+        <button id="btn-get-fortune" class="main-btn primary">🔮 운세 확인하기</button>
+      </div>
+    </div>
+    
+    <!-- 설정 페이지 -->
+    <div id="settings-page" class="page hidden">
+      <div class="page-header draggable">
+        <h1>⚙️ 설정</h1>
+        <button class="close-btn" onclick="window.electronAPI.closePopup()">×</button>
+      </div>
+      <div class="page-content">
+        <div class="settings-group">
+          <label for="api-key">API Key (Gemini 2.5 Pro)</label>
+          <input type="password" id="api-key" placeholder="API 키를 입력하세요">
+        </div>
+        <div class="settings-group">
+          <label for="user-name">내 이름</label>
+          <input type="text" id="user-name" placeholder="캐릭터가 부를 내 이름">
+        </div>
+        <div class="settings-group">
+          <label for="user-prompt">내 소개 (선택)</label>
+          <textarea id="user-prompt" placeholder="나에 대한 설명, 성격, 특징 등을 입력하면 캐릭터가 더 자연스럽게 답장해요..."></textarea>
+        </div>
+        <div class="settings-group">
+          <label for="character-prompt">캐릭터 프롬프트</label>
+          <textarea id="character-prompt" placeholder="캐릭터의 성격, 말투, 특징 등을 자세히 입력하세요..."></textarea>
+        </div>
+        <div class="settings-group">
+          <label for="relationship">캐릭터와의 관계</label>
+          <input type="text" id="relationship" placeholder="예: 친구, 선배, 동료, 아이돌과 팬...">
+        </div>
+        <div class="settings-group">
+          <label for="font-select">편지 폰트</label>
+          <select id="font-select" class="font-select">
+            <option value="NanumSquare">나눔스퀘어</option>
+            <option value="LeeSeoyun">이서윤체</option>
+            <option value="NIXGON">닉스곤폰트</option>
+            <option value="Cafe24Oneprettynight">카페24 고운밤</option>
+            <option value="GowunDodum">고운돋움</option>
+            <option value="Galmuri9">갈무리9</option>
+          </select>
+          <div id="font-preview" class="font-preview">
+            <p>가나다라마바사 ABCDEFG 1234567890</p>
+            <p>오늘 하루도 수고했어요!</p>
+          </div>
+        </div>
+        <div class="settings-group toggle-group">
+          <label>말투 설정</label>
+          <div class="toggle-wrapper">
+            <span class="toggle-label">반말</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="formal-speech">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">존댓말</span>
+          </div>
+        </div>
+        <div class="settings-group toggle-group">
+          <label>항상 위에 표시</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="always-on-top" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="settings-group toggle-group">
+          <label>맞춤법 검사</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="spellcheck-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <button id="btn-save-settings" class="main-btn primary">💾 설정 저장</button>
+      </div>
+    </div>
+    
+    <!-- 알림 페이지 -->
+    <div id="alert-page" class="page hidden">
+      <div class="page-content alert-content">
+        <p id="alert-message"></p>
+        <button id="btn-close-alert" class="main-btn primary">확인</button>
+      </div>
+    </div>
+    
+    <!-- 로딩 -->
+    <div id="loading" class="hidden">
+      <div class="spinner"></div>
+      <p id="loading-text">처리 중...</p>
+    </div>
+  </div>
+  
+  <script src="modules/llm.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
